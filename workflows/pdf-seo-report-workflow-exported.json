@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-05-02T15:12:08.546Z",
+  "updatedAt": "2026-05-02T16:23:38.500Z",
   "createdAt": "2026-05-02T14:19:40.782Z",
   "id": "0QFFzhHuonh8DSdw",
   "name": "My workflow",
@@ -140,6 +140,24 @@
       ],
       "id": "dcc261d4-bb7b-43be-b33e-d0a47d3295d4",
       "name": "Convert to File"
+    },
+    {
+      "parameters": {
+        "operation": "completion",
+        "respondWith": "returnBinary",
+        "completionTitle": "Report Generated",
+        "completionMessage": "Here is your generated SEO Report",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.form",
+      "typeVersion": 2.5,
+      "position": [
+        832,
+        -16
+      ],
+      "id": "abae5871-3f91-4845-979a-d696b59c4458",
+      "name": "Form",
+      "webhookId": "cfecd2ea-45dc-4b0f-a1df-7851792a6bd3"
     }
   ],
   "connections": {
@@ -197,6 +215,17 @@
           }
         ]
       ]
+    },
+    "Convert to File": {
+      "main": [
+        [
+          {
+            "node": "Form",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
   "settings": {
@@ -208,9 +237,9 @@
     "templateCredsSetupCompleted": true
   },
   "pinData": {},
-  "versionId": "0d99f3d6-053e-4e96-a820-cba6be2a29ec",
+  "versionId": "553eecad-7172-4514-a496-797e60e6e98b",
   "activeVersionId": null,
-  "versionCounter": 105,
+  "versionCounter": 119,
   "triggerCount": 0,
   "tags": [],
   "shared": [
