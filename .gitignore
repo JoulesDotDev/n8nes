@@ -4,3 +4,7 @@
 n8n_data/
 files/
 *.log
+.omc/
+venv/
+__pycache__/
+*.pyc
