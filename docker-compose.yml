@@ -1,0 +1,28 @@
+services:
+  n8n:
+    image: n8nio/n8n:latest
+    container_name: n8n
+    restart: unless-stopped
+    ports:
+      - "5678:5678"
+    environment:
+      - N8N_HOST=localhost
+      - N8N_PORT=5678
+      - N8N_PROTOCOL=http
+      - WEBHOOK_URL=http://localhost:5678/
+      - GENERIC_TIMEZONE=${GENERIC_TIMEZONE:-UTC}
+      - TZ=${GENERIC_TIMEZONE:-UTC}
+      - N8N_ENCRYPTION_KEY=${N8N_ENCRYPTION_KEY}
+      - N8N_RUNNERS_ENABLED=true
+      - N8N_DIAGNOSTICS_ENABLED=false
+      - N8N_PERSONALIZATION_ENABLED=false
+      - OPENROUTER_API_KEY=${OPENROUTER_API_KEY}
+      - OPENROUTER_BASE_URL=https://openrouter.ai/api/v1
+      - OPENROUTER_DEFAULT_MODEL=${OPENROUTER_DEFAULT_MODEL:-anthropic/claude-sonnet-4.5}
+    volumes:
+      - n8n_data:/home/node/.n8n
+      - ./workflows:/home/node/workflows
+      - ./files:/files
+
+volumes:
+  n8n_data:
