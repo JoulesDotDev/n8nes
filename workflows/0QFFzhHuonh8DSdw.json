@@ -1,0 +1,239 @@
+{
+  "updatedAt": "2026-05-02T15:12:08.546Z",
+  "createdAt": "2026-05-02T14:19:40.782Z",
+  "id": "0QFFzhHuonh8DSdw",
+  "name": "My workflow",
+  "description": null,
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Audit this landing page for SEO, performance hints, accessibility, and security.\n\nURL: {{ $('On form submission').item.json.URL }}\nStatus: {{ $json.statusCode }}\nHeaders: {{ JSON.stringify($json.headers, null, 2) }}\n\nHTML:\n{{ $json.data.slice(0.60000) }}",
+        "options": {
+          "systemMessage": "You are an SEO and web-quality auditor. Analyze the provided HTML and HTTP response headers and produce a prioritized report with these sections:\n\n1. Meta & SEO basics — <title>, meta description, canonical, OG/Twitter cards, hreflang, robots\n2. Headings & content structure — H1 uniqueness, heading hierarchy, word count\n3. Images — alt text coverage, lazy-loading, modern formats, oversized files (flag any <img> without alt or width/height)\n4. Links — internal/external counts, nofollow usage, broken anchor patterns\n5. Performance signals — render-blocking resources, inline CSS/JS size, missing preconnect/preload\n6. Security headers — Strict-Transport-Security, Content-Security-Policy, X-Frame-Options, X-Content-Type-Options, Referrer-Policy, Permissions-Policy\n7. Accessibility — lang attribute, form labels, ARIA misuse\n8. Structured data — JSON-LD presence and schema types\n\nFor each finding output: Severity (high/med/low), What's wrong, Where (selector or header name), Recommended fix. End with a Top 5 quick wins list."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        112,
+        -16
+      ],
+      "id": "dc010cd1-c4a8-428e-b9e8-446ff985a37b",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "formTitle": "Landing Page URL",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "URL",
+              "fieldType": "=url",
+              "fieldOptions": {
+                "values": [
+                  {}
+                ]
+              }
+            }
+          ]
+        },
+        "responseMode": "lastNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.5,
+      "position": [
+        -272,
+        0
+      ],
+      "id": "397f3162-7e73-4278-a94a-9934fdd9eab0",
+      "name": "On form submission",
+      "webhookId": "abf91e3e-d001-404e-ac03-39800f63ad68",
+      "alwaysOutputData": true,
+      "executeOnce": true
+    },
+    {
+      "parameters": {
+        "model": "qwen/qwen3.5-9b",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        112,
+        208
+      ],
+      "id": "38a2f1c9-e6c4-406a-9335-8d900d9fbb2c",
+      "name": "OpenRouter Chat Model",
+      "credentials": {
+        "openRouterApi": {
+          "id": "e4TEXEfzMqd3VlGR",
+          "name": "OpenRouter account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "={{ $('On form submission').item.json.URL }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "User-Agent",
+              "value": "Mozilla/5.0 (compatible; SEOAuditBot/1.0)"
+            }
+          ]
+        },
+        "options": {
+          "response": {
+            "response": {
+              "fullResponse": true
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        -64,
+        -16
+      ],
+      "id": "5a19923c-f385-4bef-b595-785dc464cf4f",
+      "name": "HTTP Request",
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://host.docker.internal:8191/convert",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"markdown\": {{ JSON.stringify($json.output) }},\n  \"title\": {{ JSON.stringify('SEO Audit - ' + $('On form submission').item.json.URL.replace(/https?:\\/\\//, '').replace(/[^a-zA-Z0-9]+/g, '_')) }}\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        416,
+        -16
+      ],
+      "id": "ccbce704-9be5-4474-a9f0-2022cd5c50e9",
+      "name": "HTTP Request1"
+    },
+    {
+      "parameters": {
+        "operation": "toBinary",
+        "sourceProperty": "pdf_base64",
+        "options": {
+          "fileName": "={{ $json.filename }}",
+          "mimeType": "application/pdf"
+        }
+      },
+      "type": "n8n-nodes-base.convertToFile",
+      "typeVersion": 1.1,
+      "position": [
+        624,
+        -16
+      ],
+      "id": "dcc261d4-bb7b-43be-b33e-d0a47d3295d4",
+      "name": "Convert to File"
+    }
+  ],
+  "connections": {
+    "On form submission": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenRouter Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request1": {
+      "main": [
+        [
+          {
+            "node": "Convert to File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {},
+  "versionId": "0d99f3d6-053e-4e96-a820-cba6be2a29ec",
+  "activeVersionId": null,
+  "versionCounter": 105,
+  "triggerCount": 0,
+  "tags": [],
+  "shared": [
+    {
+      "updatedAt": "2026-05-02T14:19:40.786Z",
+      "createdAt": "2026-05-02T14:19:40.786Z",
+      "role": "workflow:owner",
+      "workflowId": "0QFFzhHuonh8DSdw",
+      "projectId": "3EkpaloFPmNuYoBp",
+      "project": {
+        "updatedAt": "2026-05-02T14:17:37.634Z",
+        "createdAt": "2026-05-02T14:14:39.521Z",
+        "id": "3EkpaloFPmNuYoBp",
+        "name": "joules zapata <jouleszapata@gmail.com>",
+        "type": "personal",
+        "icon": null,
+        "description": null,
+        "creatorId": "dc9d8344-443e-466c-b11f-b87cf694b929"
+      }
+    }
+  ],
+  "versionMetadata": {
+    "name": null,
+    "description": null
+  }
+}
