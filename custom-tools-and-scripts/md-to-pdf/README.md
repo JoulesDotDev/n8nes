@@ -85,3 +85,33 @@ Then a **Convert to File** node (Operation: *Move Base64 String to File*, Base64
 - Uses [`markdown-pdf`](https://pypi.org/project/markdown-pdf/) (PyMuPDF under the hood). Pure-pip, no system libs.
 - PyMuPDF is AGPL-3.0 — fine for personal/internal use, check before bundling into a closed-source product.
 - Customize fonts/colors by editing `USER_CSS` in [server.py](server.py).
+
+
+
+### AI Agent Prompt:
+
+Audit this landing page for SEO, performance hints, accessibility, and security.
+
+URL: {{ $('On form submission').item.json.URL }}
+Status: {{ $json.statusCode }}
+Headers: {{ JSON.stringify($json.headers, null, 2) }}
+
+HTML:
+{{ $json.data.slice(0.60000) }}
+
+
+
+### AI Agent System Prompt
+
+You are an SEO and web-quality auditor. Analyze the provided HTML and HTTP response headers and produce a prioritized report with these sections:
+
+1. Meta & SEO basics — <title>, meta description, canonical, OG/Twitter cards, hreflang, robots
+2. Headings & content structure — H1 uniqueness, heading hierarchy, word count
+3. Images — alt text coverage, lazy-loading, modern formats, oversized files (flag any <img> without alt or width/height)
+4. Links — internal/external counts, nofollow usage, broken anchor patterns
+5. Performance signals — render-blocking resources, inline CSS/JS size, missing preconnect/preload
+6. Security headers — Strict-Transport-Security, Content-Security-Policy, X-Frame-Options, X-Content-Type-Options, Referrer-Policy, Permissions-Policy
+7. Accessibility — lang attribute, form labels, ARIA misuse
+8. Structured data — JSON-LD presence and schema types
+
+For each finding output: Severity (high/med/low), What's wrong, Where (selector or header name), Recommended fix. End with a Top 5 quick wins list.
