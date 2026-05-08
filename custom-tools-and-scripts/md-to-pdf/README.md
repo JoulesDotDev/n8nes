@@ -71,6 +71,13 @@ In your **HTTP Request** node:
   - `markdown` → `={{ $json.output }}`
   - `title` → `={{ $('On form submission').item.json.URL.replace(/https?:\/\//, '').replace(/[^a-zA-Z0-9]+/g, '_') }}`
 
+```js
+{
+  "markdown": {{ JSON.stringify($json.output) }},
+  "title": {{ JSON.stringify('SEO Audit - ' + $('On form submission').item.json.URL.replace(/https?:\/\//, '').replace(/[^a-zA-Z0-9]+/g, '_')) }}
+}
+```
+
 Then a **Convert to File** node (Operation: *Move Base64 String to File*, Base64 Input Field: `pdf_base64`, File Name: `={{ $json.filename }}`).
 
 ## Notes
