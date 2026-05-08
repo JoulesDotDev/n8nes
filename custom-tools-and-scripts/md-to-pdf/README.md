@@ -121,7 +121,7 @@ Your job: produce a prioritized audit report covering classic SEO, GEO, performa
 - If the HTML appears truncated, note it once at the top and continue auditing what's visible.
 - Do not invent issues to fill sections. Empty is fine.
 - Be specific. "Improve meta description" is useless; "Meta description is 38 chars, expand to 140-160 and include primary keyword X" is useful.
-- Do not use bulleted lists for findings — use tables only.
+- Use **bulleted lists only**. Do not use Markdown tables anywhere in the output.
 
 ## Sections to evaluate
 
@@ -149,54 +149,78 @@ Your job: produce a prioritized audit report covering classic SEO, GEO, performa
 
 ## Finding format
 
-Render each section's findings as a Markdown table:
+Each finding is one bullet in this exact shape:
 
-| Severity | What | Where | Fix |
-|----------|------|-------|-----|
-| 🔴 high  | ...  | ...   | ... |
+- **[Severity]** What — `Where` — *Fix:* one-line recommendation
 
-- Keep "Where" to a short selector or header name (e.g. `<meta name="description">`, `Strict-Transport-Security`)
-- Keep "Fix" to one line; if longer guidance is needed, put it in a follow-up note under the table
-- If a section has no issues, write "✅ No issues found" instead of an empty table
-- If a section can't be judged from the inputs, write "⚠️ Insufficient data — <reason>"
+Example:
+
+- 🔴 **high** Missing `<title>` tag — `<head>` — *Fix:* add `<title>Primary keyword | Brand</title>` (50-60 chars)
+- 🟡 **medium** Meta description too short (38 chars) — `<meta name="description">` — *Fix:* expand to 140-160 chars including primary keyword
+- 🟢 **low** No `preconnect` for Google Fonts — `<head>` — *Fix:* add `<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>`
+
+Section status when no issues:
+
+- ✅ No issues found
+
+Section status when not auditable:
+
+- ⚠️ Insufficient data — <reason>
 
 ## Output
 
 Return Markdown in this exact order:
 
 ### 1. Summary
-A 2-3 sentence overview, then a scorecard table:
 
-| Section | Score | Status |
-|---------|-------|--------|
-| Meta & SEO basics | 82 | 🟢 Good |
-| Headings & structure | 65 | 🟡 Needs work |
-| Images | ... | ... |
-| Links | ... | ... |
-| Performance signals | ... | ... |
-| Security headers | ... | ... |
-| Accessibility | ... | ... |
-| Structured data | ... | ... |
-| GEO | ... | ... |
-| Crawlability | ... | ... |
+- Overall health: one-line verdict
+- Biggest risk: one-line
+- Standout strength: one-line
+- Truncation note (only if HTML was truncated)
 
-Status thresholds: 🟢 80-100 Good · 🟡 50-79 Needs work · 🔴 0-49 Poor
+### 2. Scorecard
 
-### 2. Findings
-One H3 per section (`### Meta & SEO basics`, `### Headings & structure`, …) followed by the findings table for that section.
+- **Meta & SEO basics:** XX/100 — 🟢 Good | 🟡 Needs work | 🔴 Poor
+- **Headings & structure:** XX/100 — ...
+- **Images:** XX/100 — ...
+- **Links:** XX/100 — ...
+- **Performance signals:** XX/100 — ...
+- **Security headers:** XX/100 — ...
+- **Accessibility:** XX/100 — ...
+- **Structured data:** XX/100 — ...
+- **GEO:** XX/100 — ...
+- **Crawlability:** XX/100 — ...
 
-### 3. Top 5 Quick Wins
+Thresholds: 🟢 80-100 · 🟡 50-79 · 🔴 0-49
 
-| # | Fix | Section | Severity | Effort |
-|---|-----|---------|----------|--------|
-| 1 | ... | ...     | 🔴 high  | low    |
-| 2 | ... | ...     | 🟡 medium| low    |
-| 3 | ... | ...     | ...      | ...    |
-| 4 | ... | ...     | ...      | ...    |
-| 5 | ... | ...     | ...      | ...    |
+### 3. Findings
 
-Ordered by impact-to-effort ratio (highest first).
+One H3 per section. Under each H3, a bulleted list of findings using the format above. One bullet per issue.
 
-### 4. Overall Score
-**XX / 100** — one-sentence justification tying back to the worst-scoring sections.
+- `### Meta & SEO basics`
+- `### Headings & structure`
+- `### Images`
+- `### Links`
+- `### Performance signals`
+- `### Security headers`
+- `### Accessibility`
+- `### Structured data`
+- `### GEO`
+- `### Crawlability`
+
+### 4. Top 5 Quick Wins
+
+Ordered by impact-to-effort ratio (highest first):
+
+1. **[Severity]** Fix — *Section:* X — *Effort:* low/med/high
+2. ...
+3. ...
+4. ...
+5. ...
+
+### 5. Overall Score
+
+- **XX / 100**
+- Justification: one line tying back to the worst-scoring sections
+- Next step: one-line recommendation
 ```
